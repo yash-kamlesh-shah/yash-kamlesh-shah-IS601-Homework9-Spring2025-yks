@@ -49,10 +49,6 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     return encoded_jwt
 
 def validate_and_sanitize_url(url_str):
-    """
-    Validates a given URL string and returns a sanitized version if valid.
-    Returns None if the URL is invalid, ensuring only safe URLs are processed.
-    """
     if validators.url(url_str):
         parsed_url = urlparse(url_str)
         sanitized_url = urlunparse(parsed_url)
@@ -66,7 +62,7 @@ def encode_url_to_filename(url):
     Encodes a URL into a base64 string safe for filenames, after validating and sanitizing.
     Removes padding to ensure filename compatibility.
     """
-    sanitizd_url = validate_and_sanitize_url(str(url))
+    sanitized_url = validate_and_sanitize_url(str(url))
     if sanitized_url is None:
         raise ValueError("Provided URL is invalid and cannot be encoded.")
     encoded_bytes = base64.urlsafe_b64encode(sanitized_url.encode('utf-8'))
@@ -81,7 +77,7 @@ def decode_filename_to_url(encoded_str: str) -> str:
     padding_needed = 4 - (len(encoded_str) % 4)
     if padding_needed:
         encoded_str += "=" * padding_needed
-    decoded_bytes = base64.urlsafe_b6decode(encoded_str)
+    decoded_bytes = base64.urlsafe_b64decode(encoded_str)
     return decoded_bytes.decode('utf-8')
 
 def generate_links(action: str, qr_filename: str, base_api_url: str, download_url: str) -> List[dict]:
